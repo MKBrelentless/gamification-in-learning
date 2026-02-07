@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.log
+coverage/
+.DS_Store
+Thumbs.db
+*.local
+__pycache__/
+*.pyc
+.venv/
+venv/
+ai-service/app/models/*.pkl

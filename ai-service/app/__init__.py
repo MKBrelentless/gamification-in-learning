@@ -1,0 +1,1 @@
+# Makes the app folder a Python package so imports like `from app.routes import ...` work.
