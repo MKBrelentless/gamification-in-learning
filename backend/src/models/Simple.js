@@ -28,7 +28,8 @@ const User = sequelize.define('User', {
   }
 }, {
   tableName: 'users',
-  timestamps: true
+  timestamps: true,
+  underscored: true
 });
 
 // Points model
@@ -51,7 +52,8 @@ const Point = sequelize.define('Point', {
   }
 }, {
   tableName: 'points',
-  timestamps: true
+  timestamps: true,
+  underscored: true
 });
 
 User.beforeCreate(async (user) => {
