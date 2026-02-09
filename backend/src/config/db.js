@@ -1,14 +1,20 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'gamification',
+  process.env.DB_NAME || 'postgres',
   process.env.DB_USER || 'postgres',
-  process.env.DB_PASSWORD || 'relentless',
+  process.env.DB_PASSWORD,
   {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST,
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    logging: false
+    logging: false,
+    dialectOptions: {
+      ssl: process.env.NODE_ENV === 'production' ? {
+        require: true,
+        rejectUnauthorized: false
+      } : false
+    }
   }
 );
 
