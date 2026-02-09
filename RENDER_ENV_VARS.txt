@@ -1,0 +1,14 @@
+# Environment Variables for Render Backend
+
+Copy and paste these into Render Dashboard > Your Service > Environment tab:
+
+PORT=3001
+DB_NAME=postgres
+DB_USER=postgres.bxnezhlypsnyxyfxdpjn
+DB_PASSWORD=@254Relentless254
+DB_HOST=db.bxnezhlypsnyxyfxdpjn.supabase.co
+DB_PORT=5432
+JWT_SECRET=gamification_jwt_secret_key_2024
+NODE_ENV=production
+SUPABASE_URL=https://bxnezhlypsnyxyfxdpjn.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_zdlACSKsZX-_1VNAIYQxyg_FniVnFDH

@@ -1,0 +1,31 @@
+# UPDATED Environment Variables for Render Backend
+
+## Option 1: Direct Connection (Try this first)
+PORT=3001
+DB_NAME=postgres
+DB_USER=postgres.bxnezhlypsnyxyfxdpjn
+DB_PASSWORD=@254Relentless254
+DB_HOST=db.bxnezhlypsnyxyfxdpjn.supabase.co
+DB_PORT=5432
+JWT_SECRET=gamification_jwt_secret_key_2024
+NODE_ENV=production
+SUPABASE_URL=https://bxnezhlypsnyxyfxdpjn.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_zdlACSKsZX-_1VNAIYQxyg_FniVnFDH
+
+## Option 2: Transaction Pooler (If Option 1 fails)
+PORT=3001
+DB_NAME=postgres
+DB_USER=postgres.bxnezhlypsnyxyfxdpjn
+DB_PASSWORD=@254Relentless254
+DB_HOST=aws-0-us-west-1.pooler.supabase.com
+DB_PORT=6543
+JWT_SECRET=gamification_jwt_secret_key_2024
+NODE_ENV=production
+SUPABASE_URL=https://bxnezhlypsnyxyfxdpjn.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_zdlACSKsZX-_1VNAIYQxyg_FniVnFDH
+
+## Instructions:
+1. In Supabase Dashboard, check if "Connection Pooling" is enabled
+2. Go to Settings > Database > Connection string
+3. Look for "Transaction" or "Session" mode
+4. Use the host and port from there

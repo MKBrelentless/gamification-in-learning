@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: gamification-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        value: postgres.bxnezhlypsnyxyfxdpjn
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        value: aws-0-us-west-1.pooler.supabase.com
+      - key: DB_PORT
+        value: 6543
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        value: https://bxnezhlypsnyxyfxdpjn.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: sb_publishable_zdlACSKsZX-_1VNAIYQxyg_FniVnFDH
