@@ -37,4 +37,23 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Gamification Learning Platform API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      users: '/api/users',
+      quiz: '/api/quiz',
+      gamification: '/api/gamification',
+      analytics: '/api/analytics',
+      recommendations: '/api/recommendations',
+      content: '/api/content',
+      qa: '/api/qa'
+    }
+  });
+});
+
 module.exports = app;
