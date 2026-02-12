@@ -14,6 +14,14 @@ function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [streakCount, setStreakCount] = useState(0);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseContent, setCourseContent] = useState('');
+  const [showTopicInput, setShowTopicInput] = useState(false);
+  const [customTopic, setCustomTopic] = useState('');
+  const [userTopics, setUserTopics] = useState([]);
+  const [showRewardAnimation, setShowRewardAnimation] = useState(false);
+  const [rewardMessage, setRewardMessage] = useState('');
+  const [completedTopics, setCompletedTopics] = useState([]);
 
   useEffect(() => {
     loadDashboardData();
@@ -49,6 +57,79 @@ function StudentDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddTopic = () => {
+    if (customTopic && !userTopics.find(t => t.title === customTopic)) {
+      const newTopic = {
+        title: customTopic,
+        description: `Learn about ${customTopic}`,
+        reason: 'Custom topic added by you',
+        points: 50
+      };
+      setUserTopics([...userTopics, newTopic]);
+      setCustomTopic('');
+      setShowTopicInput(false);
+      
+      // Award points for adding topic
+      showReward('+50 XP for adding a new topic! 🎯');
+    }
+  };
+
+  const showReward = (message) => {
+    setRewardMessage(message);
+    setShowRewardAnimation(true);
+    setTimeout(() => setShowRewardAnimation(false), 3000);
+  };
+
+  const handleCompleteTopic = (topic) => {
+    if (!completedTopics.includes(topic.title)) {
+      setCompletedTopics([...completedTopics, topic.title]);
+      showReward('+100 XP for completing a topic! 🏆');
+    }
+  };
+
+  const handleStartLearning = async (course) => {
+    const topic = course?.title || customTopic;
+    const description = course?.description || `Learn about ${customTopic}`;
+    
+    setSelectedCourse({ title: topic, description });
+    setShowTopicInput(false);
+    setCustomTopic('');
+    setCourseContent('Loading AI-generated content...');
+    
+    setTimeout(() => {
+      setCourseContent(`
+# ${topic}
+
+## Introduction
+Welcome to this comprehensive learning module on ${topic}. This course will help you master the essential concepts and skills.
+
+## Key Concepts
+1. **Fundamental Principles**: Understanding the core concepts
+2. **Practical Applications**: Real-world use cases
+3. **Best Practices**: Industry-standard approaches
+4. **Advanced Techniques**: Taking your skills to the next level
+
+## Learning Objectives
+- Master the fundamental concepts
+- Apply knowledge to practical scenarios
+- Develop problem-solving skills
+- Build confidence in the subject
+
+## Course Content
+${description}
+
+## Practice Exercises
+1. Complete the interactive quiz
+2. Work on hands-on projects
+3. Participate in peer discussions
+4. Review and reflect on your learning
+
+## Next Steps
+Continue your learning journey by exploring related topics and completing the assessment.
+      `);
+    }, 1500);
   };
 
   const calculateStreak = () => {
@@ -175,7 +256,10 @@ function StudentDashboard() {
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
                   <h2 className="text-2xl font-bold text-white mb-6">🎮 Quick Actions</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-4 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                    <button 
+                      onClick={() => setShowTopicInput(true)}
+                      className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-4 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg"
+                    >
                       <div className="text-2xl mb-2">📚</div>
                       <div className="font-semibold">Study Mode</div>
                     </button>
@@ -191,22 +275,49 @@ function StudentDashboard() {
                 </div>
                 
                 {/* Recommendations */}
-                {recommendations.length > 0 && (
+                {userTopics.length > 0 && (
                   <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 className="text-2xl font-bold text-white mb-6">🎯 Personalized for You</h2>
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-bold text-white">🎯 Personalized for You</h2>
+                      <button
+                        onClick={() => setShowTopicInput(true)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                      >
+                        + Add Topic
+                      </button>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {recommendations.map((rec, index) => (
-                        <div key={index} className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-4 rounded-xl border border-white/10 hover:scale-105 transition-all duration-300">
+                      {userTopics.map((rec, index) => {
+                        const isCompleted = completedTopics.includes(rec.title);
+                        return (
+                        <div key={index} className={`bg-gradient-to-r ${isCompleted ? 'from-green-500/20 to-emerald-500/20' : 'from-blue-500/20 to-purple-500/20'} p-4 rounded-xl border border-white/10 hover:scale-105 transition-all duration-300 relative`}>
+                          {isCompleted && (
+                            <div className="absolute top-2 right-2 text-2xl">✅</div>
+                          )}
                           <h3 className="font-semibold text-white mb-2">{rec.title}</h3>
                           <p className="text-white/80 text-sm">{rec.description}</p>
                           {rec.reason && (
                             <p className="text-white/60 text-xs mt-2">💡 {rec.reason}</p>
                           )}
-                          <button className="mt-3 bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors">
-                            Start Learning
-                          </button>
+                          <div className="flex gap-2 mt-3">
+                            <button 
+                              onClick={() => handleStartLearning(rec)}
+                              className="flex-1 bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
+                            >
+                              {isCompleted ? 'Review' : 'Start Learning'}
+                            </button>
+                            {!isCompleted && (
+                              <button 
+                                onClick={() => handleCompleteTopic(rec)}
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                              >
+                                ✓ Complete
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -302,16 +413,123 @@ function StudentDashboard() {
               <h3 className="text-white font-bold mb-4">🎯 Daily Challenge</h3>
               <div className="text-center">
                 <div className="text-6xl mb-4">🎲</div>
-                <p className="text-white/80 mb-4">Complete 3 quizzes today!</p>
+                <p className="text-white/80 mb-4">Complete 3 topics today!</p>
                 <div className="bg-white/20 rounded-full h-2 mb-4">
-                  <div className="bg-gradient-to-r from-yellow-400 to-pink-500 h-2 rounded-full" style={{width: '60%'}}></div>
+                  <div className="bg-gradient-to-r from-yellow-400 to-pink-500 h-2 rounded-full" style={{width: `${(completedTopics.length / 3) * 100}%`}}></div>
                 </div>
-                <p className="text-white/60 text-sm">2/3 completed</p>
+                <p className="text-white/60 text-sm">{completedTopics.length}/3 completed</p>
+                <div className="mt-4 text-yellow-400 font-bold">Reward: 500 XP + 🏆 Badge</div>
+              </div>
+            </div>
+            
+            {/* Achievements Showcase */}
+            <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <h3 className="text-white font-bold mb-4">🏆 Recent Achievements</h3>
+              <div className="space-y-3">
+                <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
+                  <div className="text-3xl">🥇</div>
+                  <div>
+                    <div className="text-white font-semibold text-sm">First Steps</div>
+                    <div className="text-white/60 text-xs">Added your first topic</div>
+                  </div>
+                </div>
+                {completedTopics.length > 0 && (
+                  <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
+                    <div className="text-3xl">⚡</div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">Quick Learner</div>
+                      <div className="text-white/60 text-xs">Completed {completedTopics.length} topic{completedTopics.length > 1 ? 's' : ''}</div>
+                    </div>
+                  </div>
+                )}
+                {completedTopics.length >= 3 && (
+                  <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
+                    <div className="text-3xl">🔥</div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">On Fire!</div>
+                      <div className="text-white/60 text-xs">3-day streak achieved</div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Reward Animation */}
+      {showRewardAnimation && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-full shadow-2xl font-bold text-lg">
+            {rewardMessage}
+          </div>
+        </div>
+      )}
+
+      {/* Topic Input Modal */}
+      {showTopicInput && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 max-w-md w-full p-6">
+            <h2 className="text-2xl font-bold text-white mb-4">What do you want to learn?</h2>
+            <p className="text-white/70 text-sm mb-4">Enter a topic and it will be added to your personalized recommendations</p>
+            <input
+              type="text"
+              value={customTopic}
+              onChange={(e) => setCustomTopic(e.target.value)}
+              placeholder="Enter a topic (e.g., Python Programming, Data Science)"
+              className="w-full px-4 py-3 bg-white/90 rounded-lg mb-4 text-gray-900"
+              onKeyPress={(e) => e.key === 'Enter' && customTopic && handleAddTopic()}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddTopic}
+                disabled={!customTopic}
+                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                Add Topic
+              </button>
+              <button
+                onClick={() => { setShowTopicInput(false); setCustomTopic(''); }}
+                className="flex-1 bg-white/20 text-white py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Course Content Modal */}
+      {selectedCourse && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-blue-600 p-6 rounded-t-2xl flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">{selectedCourse.title}</h2>
+              <button 
+                onClick={() => setSelectedCourse(null)}
+                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 text-white">
+              <div className="prose prose-invert max-w-none">
+                {courseContent.split('\n').map((line, index) => {
+                  if (line.startsWith('# ')) return <h1 key={index} className="text-3xl font-bold mb-4">{line.substring(2)}</h1>;
+                  if (line.startsWith('## ')) return <h2 key={index} className="text-2xl font-bold mt-6 mb-3">{line.substring(3)}</h2>;
+                  if (line.startsWith('- ')) return <li key={index} className="ml-6 mb-2">{line.substring(2)}</li>;
+                  if (line.match(/^\d+\./)) return <li key={index} className="ml-6 mb-2">{line}</li>;
+                  if (line.includes('**')) {
+                    const parts = line.split('**');
+                    return <p key={index} className="mb-3">{parts.map((part, i) => i % 2 === 1 ? <strong key={i}>{part}</strong> : part)}</p>;
+                  }
+                  return line ? <p key={index} className="mb-3">{line}</p> : <br key={index} />;
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -94,7 +94,7 @@ function TeacherDashboard() {
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-2 border border-white/20">
-            {['overview', 'students', 'content', 'questions', 'create-topic'].map((tab) => (
+            {['overview', 'students', 'content', 'questions', 'create-topic', 'add-questions'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -104,7 +104,7 @@ function TeacherDashboard() {
                     : 'text-white hover:bg-white/10'
                 }`}
               >
-                {tab === 'questions' ? 'Q&A' : tab === 'create-topic' ? 'Create Topic' : tab}
+                {tab === 'questions' ? 'Q&A' : tab === 'create-topic' ? 'Create Topic' : tab === 'add-questions' ? 'Add Questions' : tab}
               </button>
             ))}
           </div>
@@ -220,6 +220,64 @@ function TeacherDashboard() {
             )}
             
             {activeTab === 'create-topic' && (
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                <h2 className="text-2xl font-bold text-white mb-6">Create New Topic</h2>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  const topic = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    difficulty: formData.get('difficulty')
+                  };
+                  console.log('Topic created:', topic);
+                  alert('Topic created! Now add questions in the "Add Questions" tab.');
+                  e.target.reset();
+                }} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 mb-2">Topic Title *</label>
+                      <input
+                        type="text"
+                        name="title"
+                        placeholder="e.g., Introduction to JavaScript"
+                        className="w-full p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 mb-2">Difficulty</label>
+                      <select
+                        name="difficulty"
+                        className="w-full p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                      >
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-white/80 mb-2">Description *</label>
+                    <textarea
+                      name="description"
+                      placeholder="Describe what students will learn..."
+                      className="w-full p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 px-6 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 text-lg"
+                  >
+                    Create Topic
+                  </button>
+                </form>
+              </div>
+            )}
+            
+            {activeTab === 'add-questions' && (
               <CreateTopic />
             )}
           </div>
