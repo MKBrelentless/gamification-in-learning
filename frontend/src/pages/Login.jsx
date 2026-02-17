@@ -30,15 +30,9 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Cover Image */}
+    <div className="min-h-screen flex" style={{ backgroundImage: "url('/images/img.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      {/* Left Side - Cover Image (Desktop Only) */}
       <div className="hidden lg:flex lg:w-1/2 relative">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/img.png')" }}
-        >
-          <div className="absolute inset-0"></div>
-        </div>
         <div className="relative z-10 flex flex-col justify-start pt-32 items-center text-white p-12">
           <div className="backdrop-blur-md bg-blue-600/30 rounded-2xl p-6 max-w-xl">
             <h1 className="text-4xl font-bold mb-4" style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}>Gamification Learning Platform</h1>
