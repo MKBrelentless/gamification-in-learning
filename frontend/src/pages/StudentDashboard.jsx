@@ -72,7 +72,7 @@ function StudentDashboard() {
       setShowTopicInput(false);
       
       // Award points for adding topic
-      showReward('+50 XP for adding a new topic! 🎯');
+      showReward('+50 Points! 🎯');
     }
   };
 
@@ -85,7 +85,7 @@ function StudentDashboard() {
   const handleCompleteTopic = (topic) => {
     if (!completedTopics.includes(topic.title)) {
       setCompletedTopics([...completedTopics, topic.title]);
-      showReward('+100 XP for completing a topic! 🏆');
+      showReward('+100 Points! 🏆');
     }
   };
 
@@ -389,14 +389,44 @@ Continue your learning journey by exploring related topics and completing the as
             
             {activeTab === 'achievements' && (
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                <h2 className="text-2xl font-bold text-white mb-6">🏆 Your Achievements</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {['🥇', '🎯', '⚡', '🔥', '💎', '🚀', '🎪', '🌟'].map((emoji, index) => (
-                    <div key={index} className="bg-gradient-to-br from-yellow-400/20 to-orange-500/20 p-6 rounded-xl text-center border border-white/10 hover:scale-105 transition-all duration-300">
-                      <div className="text-4xl mb-2">{emoji}</div>
-                      <div className="text-white font-medium">Achievement {index + 1}</div>
-                    </div>
-                  ))}
+                <h2 className="text-2xl font-bold text-white mb-6">🏆 All Badges</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className={`p-6 rounded-xl text-center border transition-all duration-300 ${
+                    userTopics.length > 0 ? 'bg-gradient-to-br from-yellow-400/20 to-orange-500/20 border-yellow-400/50' : 'bg-white/5 border-white/10 opacity-50'
+                  }`}>
+                    <div className="text-4xl mb-2">🥇</div>
+                    <div className="text-white font-medium">Starter</div>
+                    <div className="text-white/60 text-xs mt-1">Add a topic</div>
+                  </div>
+                  <div className={`p-6 rounded-xl text-center border transition-all duration-300 ${
+                    completedTopics.length > 0 ? 'bg-gradient-to-br from-blue-400/20 to-purple-500/20 border-blue-400/50' : 'bg-white/5 border-white/10 opacity-50'
+                  }`}>
+                    <div className="text-4xl mb-2">⚡</div>
+                    <div className="text-white font-medium">Learner</div>
+                    <div className="text-white/60 text-xs mt-1">Finish 1 topic</div>
+                  </div>
+                  <div className={`p-6 rounded-xl text-center border transition-all duration-300 ${
+                    completedTopics.length >= 3 ? 'bg-gradient-to-br from-red-400/20 to-orange-500/20 border-red-400/50' : 'bg-white/5 border-white/10 opacity-50'
+                  }`}>
+                    <div className="text-4xl mb-2">🔥</div>
+                    <div className="text-white font-medium">Champion</div>
+                    <div className="text-white/60 text-xs mt-1">Finish 3 topics</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 opacity-50 p-6 rounded-xl text-center">
+                    <div className="text-4xl mb-2">🎯</div>
+                    <div className="text-white font-medium">Expert</div>
+                    <div className="text-white/60 text-xs mt-1">Finish 10 topics</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 opacity-50 p-6 rounded-xl text-center">
+                    <div className="text-4xl mb-2">💎</div>
+                    <div className="text-white font-medium">Master</div>
+                    <div className="text-white/60 text-xs mt-1">Finish 20 topics</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 opacity-50 p-6 rounded-xl text-center">
+                    <div className="text-4xl mb-2">🚀</div>
+                    <div className="text-white font-medium">Legend</div>
+                    <div className="text-white/60 text-xs mt-1">Finish 50 topics</div>
+                  </div>
                 </div>
               </div>
             )}
@@ -418,27 +448,29 @@ Continue your learning journey by exploring related topics and completing the as
                   <div className="bg-gradient-to-r from-yellow-400 to-pink-500 h-2 rounded-full" style={{width: `${(completedTopics.length / 3) * 100}%`}}></div>
                 </div>
                 <p className="text-white/60 text-sm">{completedTopics.length}/3 completed</p>
-                <div className="mt-4 text-yellow-400 font-bold">Reward: 500 XP + 🏆 Badge</div>
+                <div className="mt-4 text-yellow-400 font-bold">Win: 500 Points + Badge 🏆</div>
               </div>
             </div>
             
             {/* Achievements Showcase */}
             <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-              <h3 className="text-white font-bold mb-4">🏆 Recent Achievements</h3>
+              <h3 className="text-white font-bold mb-4">🏆 Your Badges</h3>
               <div className="space-y-3">
-                <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
-                  <div className="text-3xl">🥇</div>
-                  <div>
-                    <div className="text-white font-semibold text-sm">First Steps</div>
-                    <div className="text-white/60 text-xs">Added your first topic</div>
+                {userTopics.length > 0 && (
+                  <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
+                    <div className="text-3xl">🥇</div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">Starter</div>
+                      <div className="text-white/60 text-xs">Add a topic to learn</div>
+                    </div>
                   </div>
-                </div>
+                )}
                 {completedTopics.length > 0 && (
                   <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
                     <div className="text-3xl">⚡</div>
                     <div>
-                      <div className="text-white font-semibold text-sm">Quick Learner</div>
-                      <div className="text-white/60 text-xs">Completed {completedTopics.length} topic{completedTopics.length > 1 ? 's' : ''}</div>
+                      <div className="text-white font-semibold text-sm">Learner</div>
+                      <div className="text-white/60 text-xs">Finish {completedTopics.length} topic{completedTopics.length > 1 ? 's' : ''}</div>
                     </div>
                   </div>
                 )}
@@ -446,9 +478,14 @@ Continue your learning journey by exploring related topics and completing the as
                   <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3">
                     <div className="text-3xl">🔥</div>
                     <div>
-                      <div className="text-white font-semibold text-sm">On Fire!</div>
-                      <div className="text-white/60 text-xs">3-day streak achieved</div>
+                      <div className="text-white font-semibold text-sm">Champion</div>
+                      <div className="text-white/60 text-xs">Finish 3 topics</div>
                     </div>
+                  </div>
+                )}
+                {userTopics.length === 0 && completedTopics.length === 0 && (
+                  <div className="text-white/60 text-sm text-center py-4">
+                    Add and complete topics to earn badges!
                   </div>
                 )}
               </div>

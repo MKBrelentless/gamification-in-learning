@@ -8,7 +8,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({ totalUsers: 0, students: 0, teachers: 0, admins: 0 });
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('overview');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -136,7 +136,7 @@ function AdminDashboard() {
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              {['users', 'activity', 'settings'].map((tab) => (
+              {['overview', 'users'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -149,6 +149,96 @@ function AdminDashboard() {
               ))}
             </nav>
           </div>
+
+          {activeTab === 'overview' && (
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-6">All Users</h2>
+              {users.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 text-lg mb-4">No users found</div>
+                  <button onClick={() => setShowAddModal(true)}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Add First User
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-blue-900 mb-2">Students ({stats.students})</h3>
+                      <div className="space-y-2">
+                        {users.filter(u => u.role === 'student').slice(0, 5).map(user => (
+                          <div key={user.id} className="text-sm text-blue-700">
+                            {user.full_name || user.name}
+                          </div>
+                        ))}
+                        {stats.students > 5 && <div className="text-xs text-blue-600">+{stats.students - 5} more</div>}
+                      </div>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-green-900 mb-2">Teachers ({stats.teachers})</h3>
+                      <div className="space-y-2">
+                        {users.filter(u => u.role === 'teacher').slice(0, 5).map(user => (
+                          <div key={user.id} className="text-sm text-green-700">
+                            {user.full_name || user.name}
+                          </div>
+                        ))}
+                        {stats.teachers > 5 && <div className="text-xs text-green-600">+{stats.teachers - 5} more</div>}
+                      </div>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-purple-900 mb-2">Admins ({stats.admins})</h3>
+                      <div className="space-y-2">
+                        {users.filter(u => u.role === 'admin').slice(0, 5).map(user => (
+                          <div key={user.id} className="text-sm text-purple-700">
+                            {user.full_name || user.name}
+                          </div>
+                        ))}
+                        {stats.admins > 5 && <div className="text-xs text-purple-600">+{stats.admins - 5} more</div>}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Recent Logins</h3>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {users.slice(0, 10).map((user) => (
+                            <tr key={user.id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {user.full_name || user.name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                                  user.role === 'teacher' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                                }`}>
+                                  {user.role}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {activeTab === 'users' && (
             <div className="p-6">
@@ -205,82 +295,7 @@ function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === 'activity' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        activity.role === 'admin' ? 'bg-purple-100 text-purple-600' :
-                        activity.role === 'teacher' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'
-                      }`}>
-                        {activity.user.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{activity.user}</div>
-                        <div className="text-sm text-gray-500">{activity.action}</div>
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-400">{activity.time}</div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Recent Logins</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Login</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {users.slice(0, 10).map((user) => (
-                        <tr key={user.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {user.full_name || user.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                              user.role === 'teacher' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {user.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'Never'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === 'settings' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">System Settings</h2>
-              <div className="space-y-4">
-                <div className="border-b pb-4">
-                  <h3 className="font-medium mb-2">Platform Status</h3>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-600">All systems operational</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
