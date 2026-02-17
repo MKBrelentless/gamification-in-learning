@@ -47,6 +47,7 @@ function AdminDashboard() {
       setRecentActivity(activity);
     } catch (error) {
       console.error('Error loading data:', error);
+      alert('Error loading users: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
