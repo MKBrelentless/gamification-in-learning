@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: gamification-ai-service
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: FRONTEND_URL
+        sync: false
+      - key: BACKEND_URL
+        sync: false

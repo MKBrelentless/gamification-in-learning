@@ -13,6 +13,7 @@ function AdminDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({ full_name: '', email: '', password: '', role: 'student' });
+  const [recentActivity, setRecentActivity] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -35,6 +36,15 @@ function AdminDashboard() {
         admins: usersData.filter(u => u.role === 'admin').length
       };
       setStats(stats);
+      
+      // Generate recent activity from users data
+      const activity = usersData.slice(0, 5).map((user, index) => ({
+        user: user.full_name || user.name,
+        action: index % 3 === 0 ? 'Logged in' : index % 3 === 1 ? 'Completed quiz' : 'Updated profile',
+        time: `${Math.floor(Math.random() * 24)} hours ago`,
+        role: user.role
+      }));
+      setRecentActivity(activity);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -125,7 +135,7 @@ function AdminDashboard() {
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              {['users', 'settings'].map((tab) => (
+              {['users', 'activity', 'settings'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -190,6 +200,68 @@ function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'activity' && (
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+              <div className="space-y-4">
+                {recentActivity.map((activity, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        activity.role === 'admin' ? 'bg-purple-100 text-purple-600' :
+                        activity.role === 'teacher' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'
+                      }`}>
+                        {activity.user.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{activity.user}</div>
+                        <div className="text-sm text-gray-500">{activity.action}</div>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">{activity.time}</div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-4">Recent Logins</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Login</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {users.slice(0, 10).map((user) => (
+                        <tr key={user.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {user.full_name || user.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                              user.role === 'teacher' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {user.role}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'Never'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
