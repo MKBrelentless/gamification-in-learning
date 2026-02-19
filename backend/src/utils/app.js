@@ -11,6 +11,8 @@ const analyticsRoutes = require('../routes/analytics.routes');
 const recommendationRoutes = require('../routes/recommendation.routes');
 const contentRoutes = require('../routes/content.routes');
 const qaRoutes = require('../routes/qa.routes');
+const enhancedRoutes = require('../routes/enhanced.routes');
+const quizGeneratorRoutes = require('../routes/quiz-generator.routes');
 
 const app = express();
 
@@ -31,6 +33,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/qa', qaRoutes);
+app.use('/api/enhanced', enhancedRoutes);
+app.use('/api/quiz-generator', quizGeneratorRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -51,7 +55,9 @@ app.get('/', (req, res) => {
       analytics: '/api/analytics',
       recommendations: '/api/recommendations',
       content: '/api/content',
-      qa: '/api/qa'
+      qa: '/api/qa',
+      enhanced: '/api/enhanced',
+      quizGenerator: '/api/quiz-generator'
     }
   });
 });

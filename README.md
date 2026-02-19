@@ -150,7 +150,8 @@ npm install
 ```
 
 ### 3. AI Service Setup
-```bash
+```bashh
+
 cd ai-service
 pip install -r requirements.txt
 ```

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+import api from '../services/api';
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -22,7 +21,7 @@ function AdminDashboard() {
   const loadData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/users`, {
+      const response = await api.get('/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -56,7 +55,7 @@ function AdminDashboard() {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/auth/register`, newUser);
+      await api.post('/auth/register', newUser);
       alert('User added successfully');
       setShowAddModal(false);
       setNewUser({ full_name: '', email: '', password: '', role: 'student' });
@@ -71,7 +70,7 @@ function AdminDashboard() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/users/${userId}`, {
+      await api.delete(`/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('User deleted successfully');
@@ -84,7 +83,7 @@ function AdminDashboard() {
   const handleUpdateRole = async (userId, newRole) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${API_URL}/users/${userId}`, 
+      await api.put(`/users/${userId}`, 
         { role: newRole },
         { headers: { Authorization: `Bearer ${token}` }}
       );
