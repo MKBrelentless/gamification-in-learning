@@ -23,6 +23,7 @@ const getLeaderboard = async (req, res) => {
       SELECT 
         u.id,
         u.full_name,
+        u.full_name as username,
         u.email,
         COALESCE(SUM(p.points_earned), 0) as "totalPoints"
       FROM users u

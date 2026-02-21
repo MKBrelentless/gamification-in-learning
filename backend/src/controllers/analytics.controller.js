@@ -1,3 +1,6 @@
+const { User, Point } = require('../models/Simple');
+const { sequelize } = require('../config/db');
+
 const getUserAnalytics = async (req, res) => {
   try {
     const mockAnalytics = {
@@ -29,20 +32,34 @@ const getUserAnalytics = async (req, res) => {
 
 const getSystemAnalytics = async (req, res) => {
   try {
-    const mockSystemAnalytics = {
+    // Get real-time top performers from database
+    const topPerformers = await sequelize.query(`
+      SELECT 
+        u.id,
+        u.full_name as username,
+        u.email,
+        COALESCE(SUM(p.points_earned), 0) as "totalPoints"
+      FROM users u
+      LEFT JOIN points p ON u.id = p.user_id
+      WHERE u.role = 'student'
+      GROUP BY u.id, u.full_name, u.email
+      ORDER BY "totalPoints" DESC
+      LIMIT 10
+    `, { type: sequelize.QueryTypes.SELECT });
+
+    // Get user count
+    const totalUsers = await User.count({ where: { role: 'student' } });
+    
+    const systemAnalytics = {
       overview: {
-        totalUsers: 150,
-        totalQuizzes: 45,
-        averageSystemScore: 72
+        totalUsers,
+        totalQuizzes: 0,
+        averageSystemScore: 0
       },
-      topPerformers: [
-        { id: 1, username: 'john_doe', totalPoints: 850 },
-        { id: 2, username: 'jane_smith', totalPoints: 720 },
-        { id: 3, username: 'mike_johnson', totalPoints: 680 }
-      ]
+      topPerformers
     };
     
-    res.json(mockSystemAnalytics);
+    res.json(systemAnalytics);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
