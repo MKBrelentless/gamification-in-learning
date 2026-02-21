@@ -1,4 +1,5 @@
-const { Point } = require('../models/Simple');
+const { Point, User } = require('../models/Simple');
+const { sequelize } = require('../config/db');
 
 const awardPoints = async (req, res) => {
   try {
@@ -18,15 +19,21 @@ const awardPoints = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
-    const mockLeaderboard = [
-      { id: 1, full_name: 'John Doe', totalPoints: 850 },
-      { id: 2, full_name: 'Jane Smith', totalPoints: 720 },
-      { id: 3, full_name: 'Mike Johnson', totalPoints: 680 },
-      { id: 4, full_name: 'Sarah Wilson', totalPoints: 590 },
-      { id: 5, full_name: 'Tom Brown', totalPoints: 520 }
-    ];
+    const leaderboard = await sequelize.query(`
+      SELECT 
+        u.id,
+        u.full_name,
+        u.email,
+        COALESCE(SUM(p.points_earned), 0) as "totalPoints"
+      FROM users u
+      LEFT JOIN points p ON u.id = p.user_id
+      WHERE u.role = 'student'
+      GROUP BY u.id, u.full_name, u.email
+      ORDER BY "totalPoints" DESC
+      LIMIT 10
+    `, { type: sequelize.QueryTypes.SELECT });
     
-    res.json(mockLeaderboard);
+    res.json(leaderboard);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

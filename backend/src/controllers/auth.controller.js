@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { User } = require('../models/Simple');
+const { PasswordReset } = require('../models/PasswordReset');
 const { Op } = require('sequelize');
 
 const generateToken = (userId) => {
@@ -77,4 +79,62 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+
+    await PasswordReset.create({
+      user_id: user.id,
+      email: user.email,
+      reset_token: resetToken,
+      expires_at: expiresAt
+    });
+
+    res.json({
+      message: 'Password reset token generated',
+      resetToken,
+      expiresIn: '1 hour'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    const resetRecord = await PasswordReset.findOne({
+      where: {
+        reset_token: token,
+        used: false,
+        expires_at: { [Op.gt]: new Date() }
+      }
+    });
+
+    if (!resetRecord) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    const user = await User.findByPk(resetRecord.user_id);
+    user.password_hash = newPassword;
+    await user.save();
+
+    resetRecord.used = true;
+    await resetRecord.save();
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { register, login, forgotPassword, resetPassword };

@@ -5,7 +5,7 @@ const { User } = require('../models/Simple');
 const router = express.Router();
 
 // Get all users (Admin only)
-router.get('/', auth, roleCheck(['admin']), async (req, res) => {
+router.get('/', auth, roleCheck('admin'), async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['password_hash'] },
@@ -47,7 +47,7 @@ router.put('/profile', auth, async (req, res) => {
 });
 
 // Update user role (Admin only)
-router.put('/:id', auth, roleCheck(['admin']), async (req, res) => {
+router.put('/:id', auth, roleCheck('admin'), async (req, res) => {
   try {
     const { role } = req.body;
     await User.update({ role }, {
@@ -64,7 +64,7 @@ router.put('/:id', auth, roleCheck(['admin']), async (req, res) => {
 });
 
 // Delete user (Admin only)
-router.delete('/:id', auth, roleCheck(['admin']), async (req, res) => {
+router.delete('/:id', auth, roleCheck('admin'), async (req, res) => {
   try {
     await User.destroy({
       where: { id: req.params.id }
