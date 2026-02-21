@@ -31,7 +31,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundImage: "url('/images/img.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundImage: "url('/images/pic.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="absolute inset-0 bg-black/40"></div>
       
       {!showForm ? (
