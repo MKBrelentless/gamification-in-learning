@@ -254,6 +254,8 @@ function AdminDashboard() {
               )}
             </div>
           )}
+
+          {activeTab === 'users' && (
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">User Management</h2>

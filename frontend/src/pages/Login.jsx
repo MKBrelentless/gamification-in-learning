@@ -70,7 +70,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center overflow-hidden" style={{ backgroundImage: "url('/images/pic.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-black/20"></div>
       
       {!showForm ? (
         <div className="relative z-10 text-center">
