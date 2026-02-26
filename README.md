@@ -186,12 +186,36 @@ start.bat
 ```
 AI Service runs on http://localhost:8000
 
-### Option 2: Production Mode
+### Option 2: Direct Node Execution (If npm has PATH issues)
+
+If you encounter `ENOENT spawn cmd.exe` errors, run directly with node:
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+node src/utils/server.js
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+node node_modules/react-scripts/scripts/start.js
+```
+
+**Terminal 3 - AI Service:**
+```bash
+cd ai-service
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+**Note:** Ensure `C:\WINDOWS\system32` is in PATH, or use Command Prompt instead of PowerShell.
+
+### Option 3: Production Mode
 
 **Backend:**
 ```bash
 cd backend
-npm start
+node src/utils/server.js
 ```
 
 **Frontend:**
@@ -416,6 +440,41 @@ npm test
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+## 📤 Pushing Changes to GitHub
+
+After making changes to your code, push them to GitHub:
+
+```bash
+# Check status of changed files
+git status
+
+# Add all changes
+git add .
+
+# Commit with a message
+git commit -m "Your commit message describing the changes"
+
+# Push to GitHub
+git push origin main
+```
+
+**Or push to a specific branch:**
+```bash
+git push origin your-branch-name
+```
+
+**First time setup (if not already configured):**
+```bash
+# Set your Git username
+git config --global user.name "Your Name"
+
+# Set your Git email
+git config --global user.email "your.email@example.com"
+
+# Connect to your GitHub repository
+git remote add origin https://github.com/MKBrelentless/gamification-in-learning.git
+```
 
 ## 📄 License
 
